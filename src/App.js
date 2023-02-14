@@ -29,7 +29,6 @@ const App = () => {
                 </main>
                 <Footer />
               </div>
-
               <ToastContainer />
             </CartWrapper>
           </AuthWrapper>
