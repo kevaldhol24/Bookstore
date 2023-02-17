@@ -476,7 +476,9 @@ body.open-menu {
 }
 
 .loader-wrapper {
-  position: absolute;
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
   inset: 0;
   z-index: 1300;
   background-color: #ffffff80;

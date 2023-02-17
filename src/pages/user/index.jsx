@@ -127,7 +127,7 @@ const User = () => {
             </TableHead>
             <TableBody>
               {users.map((row, index) => (
-                <TableRow key={row.id}>
+                <TableRow key={`${index}-${row.id}-${row.email}`}>
                   <TableCell>{row.firstName}</TableCell>
                   <TableCell>{row.lastName}</TableCell>
                   <TableCell>{row.email}</TableCell>

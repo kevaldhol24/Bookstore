@@ -1,7 +1,7 @@
 import cartService from "../service/cart.service";
 import { Role, RoutePaths } from "./enum";
 
-const addToCart = (book, id) => {
+const addToCart = async (book, id) => {
   return cartService
     .add({
       userId: id,

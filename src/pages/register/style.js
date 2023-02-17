@@ -42,6 +42,7 @@ const createAccountStyle = makeStyles((theme) => ({
             padding: " 0 15px",
             maxWidth: "50%",
             flex: "0 0 50%",
+            position: "relative",
             "@media(max-width:767px)": {
               maxWidth: "100%",
               flex: "0 0 100%",
@@ -49,6 +50,19 @@ const createAccountStyle = makeStyles((theme) => ({
             "&.full-width": {
               maxWidth: "100%",
               flex: "0 0 100%",
+            },
+            "& p": {
+              color: colors.lightTextColor,
+              fontWeight: 300,
+              fontSize: "15px",
+              marginBottom: "16px",
+              "&.text-danger": {
+                fontSize: "14px",
+                color: colors.primary,
+                position: "relative",
+                bottom: "12%",
+                margin: "0",
+              },
             },
           },
           "& .MuiInputBase-formControl": {

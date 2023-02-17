@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { createAccountStyle } from "./style";
 import {
   Breadcrumbs,
@@ -18,6 +18,8 @@ import authService from "../../service/auth.service";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { materialCommonStyles } from "../../utils/materialCommonStyles";
+import { Role } from "../../utils/enum";
+import userService from "../../service/user.service";
 
 const Register = () => {
   const classes = createAccountStyle();
@@ -32,29 +34,21 @@ const Register = () => {
     password: "",
     confirmPassword: "",
   };
+  const [roleList, setRoleList] = useState([]);
 
-  const roleList = [
-    { id: 2, name: "Seller" },
-    { id: 3, name: "Buyer" },
-  ]
-  // const [roleList, setRoleList] = useState([
-  //   { id: 2, name: "Seller" },
-  //   { id: 3, name: "Buyer" },
-  // ]);
+  useEffect(() => {
+  	getRoles();
+  }, []);
 
-  // useEffect(() => {
-  // 	getRoles();
-  // }, []);
-
-  // const getRoles = (): void => {
-  // 	userService.getAllRoles().then((res: BaseList<RoleModel[]>) => {
-  // 		if (res.records.length) {
-  // 			setRoleList(
-  // 				res.records.filter((role: RoleModel) => role.id !== Role.Admin)
-  // 			);
-  // 		}
-  // 	});
-  // };
+  const getRoles = () => {
+  	userService.getAllRoles().then((res) => {
+  		if (res.records.length) {
+  			setRoleList(
+  				res.records.filter((role) => role.id !== Role.Admin)
+  			);
+  		}
+  	});
+  };
 
   const validationSchema = Yup.object().shape({
     email: Yup.string()
