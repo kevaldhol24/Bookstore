@@ -26,8 +26,9 @@ const Book = () => {
   });
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(0);
-
   const [categories, setCategories] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     getAllCategories();
@@ -43,18 +44,12 @@ const Book = () => {
 
   const books = useMemo(() => {
     if (bookRecords?.records) {
-      // bookRecords?.records.forEach((element: BookModel) => {
-      //   element.category = categories.find(
-      //     (a) => a.id === element.categoryId
-      //   )?.name;
-      // });
       return bookRecords.records;
     }
     return [];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categories, bookRecords]);
 
-  const navigate = useNavigate();
   useEffect(() => {
     const timer = setTimeout(() => {
       if (filters.keyword === "") delete filters.keyword;
@@ -85,6 +80,7 @@ const Book = () => {
       })
       .catch((e) => toast.error(Shared.messages.DELETE_FAIL));
   };
+  
   return (
     <div className={classes.productWrapper}>
       <div className="container">

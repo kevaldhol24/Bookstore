@@ -17,14 +17,14 @@ const getAllRoles = async () => {
 };
 
 const getById = async (id) => {
-  const url = `${ENDPOINT}/${id}`;
+  const url = `${ENDPOINT}?id=${id}`;
   return request.get(url).then((res) => {
     return res.data.detail;
   });
 };
 
 const deleteUser = async (id) => {
-  const url = `${ENDPOINT}/Delete/${id}`;
+  const url = `${ENDPOINT}/Delete?id=${id}`;
   return request.delete(url).then((res) => {
     return res.data.detail;
   });

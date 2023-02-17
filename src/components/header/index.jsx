@@ -62,9 +62,8 @@ const Header = () => {
 
   const addToCart = (book) => {
     if (!authContext.user.id) {
+      navigate(RoutePaths.Login);
       toast.error("Please login before adding books to cart");
-      navigate(RoutePaths.Register);
-      return;
     } else {
       Shared.addToCart(book, authContext.user.id).then((res) => {
         if (res.error) {
@@ -173,9 +172,9 @@ const Header = () => {
                         {/* <p className="loading">Loading....</p> */}
                         <List className="related-product-list">
                           {bookList?.length > 0 &&
-                            bookList.map((item) => {
+                            bookList.map((item, i) => {
                               return (
-                                <ListItem>
+                                <ListItem key={i}>
                                   <div className="inner-block">
                                     <div className="left-col">
                                       <span className="title">{item.name}</span>
@@ -185,10 +184,7 @@ const Header = () => {
                                       <span className="price">
                                         {item.price}
                                       </span>
-                                      <Link
-                                        to="/"
-                                        onClick={() => addToCart(item)}
-                                      >
+                                      <Link onClick={() => addToCart(item)}>
                                         Add to cart
                                       </Link>
                                     </div>

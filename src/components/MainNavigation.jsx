@@ -3,17 +3,17 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuthContext } from "../context/auth";
 import { RoutePaths } from "../utils/enum";
 
-import Login from "../pages/Login"
-import Register from "../pages/register"
-import User from "../pages/user"
-import EditUser from "../pages/user/editUser"
+import Login from "../pages/Login";
+import Register from "../pages/register";
+import User from "../pages/user";
+import EditUser from "../pages/user/editUser";
 import Category from "../pages/category";
-import EditCategory from "../pages/category/editCategory"
+import EditCategory from "../pages/category/editCategory";
 import Book from "../pages/book";
 import EditBook from "../pages/book/editBook";
-import BookList from "../pages/book-listing/index"
+import BookList from "../pages/book-listing/index";
 import Cart from "../pages/cart";
-import UpdateProfile from "../pages/update-profile/index"
+import UpdateProfile from "../pages/update-profile/index";
 
 const AppRoutes = () => {
   const authContext = useAuthContext();
@@ -24,7 +24,11 @@ const AppRoutes = () => {
     <Routes>
       <Route exact path={RoutePaths.Login} element={<Login />} />
       <Route exact path={RoutePaths.Register} element={<Register />} />
-      <Route exact path={RoutePaths.BookListing} element={<BookList />} />
+      <Route
+        exact
+        path={RoutePaths.BookListing}
+        element={authContext.user.id ? <BookList /> : Redirect}
+      />
 
       <Route
         exact

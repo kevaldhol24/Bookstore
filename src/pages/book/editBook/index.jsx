@@ -88,6 +88,10 @@ const EditBook = () => {
       const fileNameArray = fileSelected.name.split(".");
       const extension = fileNameArray.pop();
       if (["png", "jpg", "jpeg"].includes(extension?.toLowerCase())) {
+        if (fileSelected.size > 50000) {
+          toast.error("File size must be less then 50KB");
+          return;
+        }
         const reader = new FileReader();
         reader.readAsDataURL(fileSelected);
         reader.onload = function () {

@@ -13,8 +13,6 @@ import {
 } from "@material-ui/core";
 import { useAuthContext } from "../../context/auth";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import { RoutePaths } from "../../utils/enum";
 import Shared from "../../utils/shared";
 import { useCartContext } from "../../context/cart";
 import { defaultFilter } from "../../constant/constant";
@@ -24,7 +22,6 @@ import categoryService from "../../service/category.service";
 const BookList = () => {
   const authContext = useAuthContext();
   const cartContext = useCartContext();
-  const navigate = useNavigate();
   const classes = productListingStyle();
   const materialClasses = materialCommonStyles();
   const [bookList, setBookList] = useState({
@@ -74,20 +71,14 @@ const BookList = () => {
   }, [categories, bookList]);
 
   const addToCart = (book) => {
-    if (!authContext.user.id) {
-      toast.error("Please login before adding books to cart");
-      navigate(RoutePaths.Register);
-      return;
-    } else {
-      Shared.addToCart(book, authContext.user.id).then((res) => {
-        if (res.error) {
-          toast.error(res.message);
-        } else {
-          toast.success(res.message);
-          cartContext.updateCart();
-        }
-      });
-    }
+    Shared.addToCart(book, authContext.user.id).then((res) => {
+      if (res.error) {
+        toast.error(res.message);
+      } else {
+        toast.success(res.message);
+        cartContext.updateCart();
+      }
+    });
   };
 
   const sortBooks = (e) => {
@@ -148,8 +139,8 @@ const BookList = () => {
         </Grid>
         <div className="product-list-wrapper">
           <div className="product-list-inner-wrapper">
-            {books.map((book) => (
-              <div className="product-list">
+            {books.map((book, index) => (
+              <div className="product-list" key={index}>
                 <div className="product-list-inner">
                   <em>
                     <img
