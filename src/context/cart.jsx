@@ -4,10 +4,7 @@ import cartService from "../service/cart.service";
 import { useAuthContext } from "./auth";
 
 const initialState = {
-  cartData: {
-    records: [],
-    totalRecords: 0,
-  },
+  cartData: [],
   updateCart: () => {},
   emptyCart: () => {},
 };
@@ -17,13 +14,10 @@ export const CartContext = createContext(initialState);
 export const CartWrapper = ({ children }) => {
   const authContext = useAuthContext();
 
-  const [cartData, setCartData] = useState({
-    totalRecords: 0,
-    records: [],
-  });
+  const [cartData, setCartData] = useState([]);
   useEffect(() => {
     updateCart();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authContext.user.id]);
 
   const updateCart = () => {
@@ -32,10 +26,7 @@ export const CartWrapper = ({ children }) => {
     }
   };
   const emptyCart = () => {
-    setCartData({
-      totalRecords: 0,
-      records: [],
-    });
+    setCartData([]);
   };
   let value = {
     cartData,

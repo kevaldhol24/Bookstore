@@ -1,18 +1,18 @@
 import request from "./request";
 
-const ENDPOINT = "api/BookStore";
+const ENDPOINT = "api/user";
 
 const login = async (data) => {
-  const url = `${ENDPOINT}/Login`;
+  const url = `${ENDPOINT}/login`;
   return request.post(url, data).then((res) => {
-    return res.data.detail;
+    return res;
   });
 };
 
 const create = async (data) => {
-  const url = `${ENDPOINT}/RegisterUser`;
+  const url = `${ENDPOINT}`;
   return request.post(url, data).then((res) => {
-    return res.data.detail;
+    return res;
   });
 };
 

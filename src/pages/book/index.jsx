@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { productStyle } from "./style";
 import { defaultFilter, RecordsPerPage } from "../../constant/constant";
 import { useNavigate } from "react-router-dom";
@@ -21,8 +21,11 @@ const Book = () => {
   const classes = productStyle();
   const [filters, setFilters] = useState(defaultFilter);
   const [bookRecords, setBookRecords] = useState({
-    records: [],
-    totalRecords: 0,
+    pageIndex: 0,
+    pageSize: 10,
+    totalPages: 1,
+    items: [],
+    totalItems: 0,
   });
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(0);
@@ -35,20 +38,12 @@ const Book = () => {
   }, []);
 
   const getAllCategories = async () => {
-    await categoryService.getAll({ pageIndex: 0 }).then((res) => {
+    await categoryService.getAll().then((res) => {
       if (res) {
-        setCategories(res.records);
+        setCategories(res);
       }
     });
   };
-
-  const books = useMemo(() => {
-    if (bookRecords?.records) {
-      return bookRecords.records;
-    }
-    return [];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categories, bookRecords]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -80,7 +75,7 @@ const Book = () => {
       })
       .catch((e) => toast.error(Shared.messages.DELETE_FAIL));
   };
-  
+
   return (
     <div className={classes.productWrapper}>
       <div className="container">
@@ -123,11 +118,13 @@ const Book = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {books?.map((row, index) => (
+              {bookRecords?.items?.map((row, index) => (
                 <TableRow key={row.id}>
                   <TableCell>{row.name}</TableCell>
                   <TableCell>{row.price}</TableCell>
-                  <TableCell>{categories.find(c=>c.id === row.categoryId)?.name}</TableCell>
+                  <TableCell>
+                    {categories.find((c) => c.id === row.categoryId)?.name}
+                  </TableCell>
                   <TableCell>
                     <Button
                       type="button"
@@ -157,7 +154,7 @@ const Book = () => {
                   </TableCell>
                 </TableRow>
               ))}
-              {!bookRecords?.records.length && (
+              {!bookRecords.items.length && (
                 <TableRow className="TableRow">
                   <TableCell colSpan={5} className="TableCell">
                     <Typography align="center" className="noDataText">
@@ -172,7 +169,7 @@ const Book = () => {
         <TablePagination
           rowsPerPageOptions={RecordsPerPage}
           component="div"
-          count={bookRecords?.records.length ? bookRecords.totalRecords : 0}
+          count={bookRecords.totalItems}
           rowsPerPage={filters.pageSize || 0}
           page={filters.pageIndex - 1}
           onPageChange={(e, newPage) => {

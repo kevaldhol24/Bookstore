@@ -12,7 +12,7 @@ import Shared from "../../../utils/shared";
 const EditCategory = () => {
   const classes = editStyle();
   const navigate = useNavigate();
-  const initialValues = { id: 0, name: "" };
+  const initialValues = { name: "" };
   const [initialValueState, setInitialValueState] = useState(initialValues);
   const { id } = useParams();
 

@@ -20,8 +20,11 @@ const Category = () => {
   const classes = productStyle();
   const [filters, setFilters] = useState(defaultFilter);
   const [categoryRecords, setCategoryRecords] = useState({
-    totalRecords: 0,
-    records: [],
+    pageIndex: 0,
+    pageSize: 10,
+    totalPages: 1,
+    items: [],
+    totalItems: 0,
   });
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(0);
@@ -95,7 +98,7 @@ const Category = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {categoryRecords?.records?.map((row, index) => (
+              {categoryRecords?.items?.map((row, index) => (
                 <TableRow key={row.id}>
                   <TableCell>{row.name}</TableCell>
                   <TableCell>
@@ -127,7 +130,7 @@ const Category = () => {
                   </TableCell>
                 </TableRow>
               ))}
-              {!categoryRecords?.records.length && (
+              {!categoryRecords?.items.length && (
                 <TableRow className="TableRow">
                   <TableCell colSpan={6} className="TableCell">
                     <Typography align="center" className="noDataText">
@@ -142,9 +145,7 @@ const Category = () => {
         <TablePagination
           rowsPerPageOptions={RecordsPerPage}
           component="div"
-          count={
-            categoryRecords?.records.length ? categoryRecords.totalRecords : 0
-          }
+          count={categoryRecords?.totalItems || 0}
           rowsPerPage={filters.pageSize || 0}
           page={filters.pageIndex - 1}
           onPageChange={(e, newPage) => {

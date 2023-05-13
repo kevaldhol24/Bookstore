@@ -18,7 +18,6 @@ import authService from "../../service/auth.service";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { materialCommonStyles } from "../../utils/materialCommonStyles";
-import { Role } from "../../utils/enum";
 import userService from "../../service/user.service";
 
 const Register = () => {
@@ -26,7 +25,6 @@ const Register = () => {
   const materialClasses = materialCommonStyles();
   const navigate = useNavigate();
   const initialValues = {
-    id: 0,
     firstName: "",
     lastName: "",
     email: "",
@@ -37,17 +35,14 @@ const Register = () => {
   const [roleList, setRoleList] = useState([]);
 
   useEffect(() => {
-  	getRoles();
-  }, []);
+    if (roleList.length) return;
+    getRoles();
+  }, [roleList]);
 
   const getRoles = () => {
-  	userService.getAllRoles().then((res) => {
-  		if (res.records.length) {
-  			setRoleList(
-  				res.records.filter((role) => role.id !== Role.Admin)
-  			);
-  		}
-  	});
+    userService.getAllRoles().then((res) => {
+      setRoleList(res);
+    });
   };
 
   const validationSchema = Yup.object().shape({
@@ -69,6 +64,7 @@ const Register = () => {
   });
 
   const onSubmit = (data) => {
+    delete data.confirmPassword;
     authService.create(data).then((res) => {
       navigate("/login");
       toast.success("Successfully registered");

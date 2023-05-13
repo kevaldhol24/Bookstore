@@ -23,7 +23,7 @@ const Login = () => {
   const authContext = useAuthContext();
   const initialValues = {
     email: "",
-    password:"",
+    password: "",
   };
 
   const validationSchema = Yup.object().shape({
@@ -37,7 +37,8 @@ const Login = () => {
 
   const onSubmit = (values) => {
     authService.login(values).then((res) => {
-      console.log("bruce@wayne2.com",res)
+      delete res._id;
+      delete res.__v;
       authContext.setUser(res);
       navigate("/");
       toast.success("Successfully logged in");

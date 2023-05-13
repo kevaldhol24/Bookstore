@@ -30,10 +30,10 @@ const Cart = () => {
   };
 
   useEffect(() => {
-    setCartList(cartContext.cartData.records);
-    setItemsInCart(cartContext.cartData.totalRecords);
-    getTotalPrice(cartContext.cartData.records);
-  }, [cartContext.cartData.records, cartContext.cartData.totalRecords]);
+    setCartList(cartContext.cartData);
+    setItemsInCart(cartContext.cartData.length);
+    getTotalPrice(cartContext.cartData);
+  }, [cartContext.cartData]);
 
   const removeItem = async (id) => {
     try {
@@ -86,10 +86,10 @@ const Cart = () => {
   const PlaceOrder = async () => {
     if (authContext.user.id) {
       const userCart = await cartService.getList(authContext.user.id);
-      if (userCart.totalRecords) {
+      if (userCart.length) {
         try {
           let cartIds = [];
-          userCart.records.forEach((element) => {
+          userCart.forEach((element) => {
             cartIds.push(element.id);
           });
           const newOrder = {

@@ -72,8 +72,8 @@ const EditUser = () => {
 
   const getRoles = () => {
     userService.getAllRoles().then((res) => {
-      if (res.records.length) {
-        setRoles(res.records);
+      if (res) {
+        setRoles(res);
       }
     });
   };
@@ -87,8 +87,12 @@ const EditUser = () => {
   };
 
   const onSubmit = (values) => {
+    const updatedValue = {
+      ...values,
+      role: roles.find((r) => r.id === values.roleId).name,
+    };
     userService
-      .update(values)
+      .update(updatedValue)
       .then((res) => {
         if (res) {
           toast.success(Shared.messages.UPDATED_SUCCESS);
