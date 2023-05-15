@@ -39,16 +39,20 @@ request.interceptors.request.use(
 request.interceptors.response.use(
   (response) => {
     const { data } = response;
+    console.log("responseeee,", response);
     removeRequest(response.config.url);
-    if (data?.code && data?.code !== "OK") {
-      return Promise.reject(new Error(data.detail || "Error"));
+    if (data?.code && data?.code !== 200) {
+      toast.error(
+        response.data.error ?? "Somthing went wrong. Please try again!"
+      );
+      return Promise.reject(new Error(data?.error || "Error"));
     } else {
-      return Promise.resolve(response);
+      return Promise.resolve(response.data.result);
     }
   },
   (error) => {
     removeRequest(error.config.url);
-    toast.error(error?.response?.data?.detail ?? "Somthing went wrong");
+    toast.error(error?.response?.data?.error ?? "Somthing went wrong");
     return Promise.reject(error);
   }
 );

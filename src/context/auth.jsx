@@ -32,17 +32,10 @@ export const AuthWrapper = ({ children }) => {
   const { pathname } = useLocation();
 
   const setUser = (user) => {
-    console.log("bruce@wayne2.com", user)
+    console.log("bruce@wayne2.com", user);
     localStorage.setItem(Shared.LocalStorageKeys.USER, JSON.stringify(user));
     _setUser(user);
   };
-
-  // useEffect(() => {
-  //   const token = localStorage.getItem(Shared.LocalStorageKeys.USER);
-  //   if (user.id && !token) {
-  //     signOut();
-  //   }
-  // }, [localStorage.getItem(Shared.LocalStorageKeys.USER)]);
 
   useEffect(() => {
     const itemStr =
@@ -53,7 +46,7 @@ export const AuthWrapper = ({ children }) => {
       navigate(`${RoutePaths.Login}`);
     }
     _setUser(itemStr);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const signOut = () => {

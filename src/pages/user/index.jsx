@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { productStyle } from "./style";
 import { defaultFilter, RecordsPerPage } from "../../constant/constant";
 import { useNavigate } from "react-router-dom";
@@ -22,17 +22,16 @@ const User = () => {
   const authContext = useAuthContext();
   const [filters, setFilters] = useState(defaultFilter);
   const [userList, setUserList] = useState({
-    records: [],
-    totalRecords: 0,
+    pageIndex: 0,
+    pageSize: 10,
+    totalPages: 1,
+    items: [],
+    totalItems: 0,
   });
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(0);
-  const [roles, setRoles] = useState([]);
 
   const navigate = useNavigate();
-  useEffect(() => {
-    getAllUserRoles();
-  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -49,22 +48,6 @@ const User = () => {
       }
     });
   };
-
-  const getAllUserRoles = async () => {
-    await userService.getAllRoles().then((res) => {
-      if (res.records.length) {
-        setRoles(res.records);
-      }
-    });
-  };
-
-  const users = useMemo(() => {
-    if (userList?.records) {
-      return userList.records;
-    }
-    return [];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roles, userList]);
 
   const columns = [
     { id: "firstName", label: "First Name", minWidth: 100 },
@@ -126,7 +109,7 @@ const User = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {users.map((row, index) => (
+              {userList?.items?.map((row, index) => (
                 <TableRow key={`${index}-${row.id}-${row.email}`}>
                   <TableCell>{row.firstName}</TableCell>
                   <TableCell>{row.lastName}</TableCell>
@@ -163,7 +146,7 @@ const User = () => {
                   </TableCell>
                 </TableRow>
               ))}
-              {!users.length && (
+              {!userList?.items?.length && (
                 <TableRow className="TableRow">
                   <TableCell colSpan={5} className="TableCell">
                     <Typography align="center" className="noDataText">
@@ -179,7 +162,7 @@ const User = () => {
         <TablePagination
           rowsPerPageOptions={RecordsPerPage}
           component="div"
-          count={userList?.records.length ? userList.totalRecords : 0}
+          count={userList?.totalItems || 0}
           rowsPerPage={filters.pageSize || 0}
           page={filters.pageIndex - 1}
           onPageChange={(e, newPage) => {

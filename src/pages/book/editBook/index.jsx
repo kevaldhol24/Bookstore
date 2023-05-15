@@ -26,7 +26,6 @@ const EditBook = () => {
   const classes = editStyle();
   const navigate = useNavigate();
   const initialValues = {
-    id: 0,
     name: "",
     price: "",
     categoryId: 0,
@@ -38,8 +37,8 @@ const EditBook = () => {
 
   useEffect(() => {
     if (id) getBookById();
-    categoryService.getAll({ pageIndex: 0 }).then((res) => {
-      setCategories(res.records);
+    categoryService.getAll().then((res) => {
+      setCategories(res);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);

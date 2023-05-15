@@ -1,13 +1,13 @@
 import request from "./request";
 
-const ENDPOINT = "api/Order";
+const ENDPOINT = "api/order";
 
 const placeOrder = async (order) => {
-  const url = `${ENDPOINT}/add`;
+  const url = `${ENDPOINT}`;
   return request
     .post(url, order)
     .then((res) => {
-      return res.data.detail;
+      return res;
     })
     .catch((e) => {
       return Promise.reject(e);

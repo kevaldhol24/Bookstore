@@ -24,9 +24,12 @@ const BookList = () => {
   const cartContext = useCartContext();
   const classes = productListingStyle();
   const materialClasses = materialCommonStyles();
-  const [bookList, setBookList] = useState({
-    records: [],
-    totalRecords: 0,
+  const [bookResponse, setBookResponse] = useState({
+    pageIndex: 0,
+    pageSize: 10,
+    totalPages: 1,
+    items: [],
+    totalItems: 0,
   });
   const [categories, setCategories] = useState([]);
   const [sortBy, setSortBy] = useState();
@@ -46,29 +49,30 @@ const BookList = () => {
 
   const searchAllBooks = (filters) => {
     bookService.getAll(filters).then((res) => {
-      setBookList(res);
+      setBookResponse(res);
     });
   };
 
   const getAllCategories = async () => {
-    await categoryService.getAll({ pageIndex: 0 }).then((res) => {
+    await categoryService.getAll().then((res) => {
       if (res) {
-        setCategories(res.records);
+        setCategories(res);
       }
     });
   };
 
   const books = useMemo(() => {
-    if (bookList?.records) {
-      bookList?.records.forEach((element) => {
+    const bookList = [...bookResponse.items];
+    if (bookList) {
+      bookList.forEach((element) => {
         element.category = categories.find(
           (a) => a.id === element.categoryId
         )?.name;
       });
-      return bookList.records;
+      return bookList;
     }
     return [];
-  }, [categories, bookList]);
+  }, [categories, bookResponse]);
 
   const addToCart = (book) => {
     Shared.addToCart(book, authContext.user.id).then((res) => {
@@ -83,7 +87,9 @@ const BookList = () => {
 
   const sortBooks = (e) => {
     setSortBy(e.target.value);
-    bookList.records.sort((a, b) => {
+    const bookList = [...bookResponse.items];
+
+    bookList.sort((a, b) => {
       if (a.name < b.name) {
         return e.target.value === "a-z" ? -1 : 1;
       }
@@ -92,6 +98,7 @@ const BookList = () => {
       }
       return 0;
     });
+    setBookResponse({ ...bookResponse, items: bookList });
   };
 
   return (
@@ -102,7 +109,7 @@ const BookList = () => {
           <Grid item xs={6}>
             <Typography variant="h2">
               Total
-              <span> - {bookList.totalRecords} items</span>
+              <span> - {bookResponse.totalItems} items</span>
             </Typography>
           </Grid>
           <div className="dropdown-wrapper">
@@ -175,9 +182,7 @@ const BookList = () => {
         </div>
         <div className="pagination-wrapper">
           <Pagination
-            count={Math.ceil(
-              (bookList?.records.length ? bookList.totalRecords : 0) / 10
-            )}
+            count={bookResponse.totalPages}
             page={filters.pageIndex}
             onChange={(e, newPage) => {
               setFilters({ ...filters, pageIndex: newPage });

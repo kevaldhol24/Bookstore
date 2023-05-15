@@ -45,18 +45,14 @@ const Header = () => {
     cartContext.emptyCart();
   };
 
-  const getBooks = async () => {
-    const res = await bookService.getAll({
-      pageIndex: 1,
-      pageSize: 10,
-      keyword: query,
-    });
-    setbookList(res.records);
+  const searchBook = async () => {
+    const res = await bookService.searchBook(query);
+    setbookList(res);
   };
 
   const search = () => {
     document.body.classList.add("search-results-open");
-    getBooks();
+    searchBook();
     setOpenSearchResult(true);
   };
 
@@ -67,9 +63,9 @@ const Header = () => {
     } else {
       Shared.addToCart(book, authContext.user.id).then((res) => {
         if (res.error) {
-          toast.error(res.message);
+          toast.error(res.error);
         } else {
-          toast.success(res.message);
+          toast.success("Item added in cart");
           cartContext.updateCart();
         }
       });
@@ -120,7 +116,7 @@ const Header = () => {
                     <ListItem className="cart-link">
                       <Link to="/cart" title="Cart">
                         <img src={cartIcon} alt="cart.png" />
-                        <span>{cartContext.cartData.totalRecords}</span>
+                        <span>{cartContext.cartData.length}</span>
                         Cart
                       </Link>
                     </ListItem>

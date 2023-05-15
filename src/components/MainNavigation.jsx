@@ -23,7 +23,11 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route exact path={RoutePaths.Login} element={<Login />} />
-      <Route exact path={RoutePaths.Register} element={<Register />} />
+      <Route
+        exact
+        path={RoutePaths.Register}
+        element={!authContext.user.id ? <Register /> : Redirect}
+      />
       <Route
         exact
         path={RoutePaths.BookListing}
