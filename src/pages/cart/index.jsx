@@ -14,15 +14,15 @@ const Cart = () => {
   const cartContext = useCartContext();
   const navigate = useNavigate();
 
-  const [CartList, setCartList] = useState([]);
-  const [ItemsInCart, setItemsInCart] = useState(0);
-  const [TotalPrice, setTotalPrice] = useState(0);
+  const [cartList, setCartList] = useState([]);
+  const [itemsInCart, setItemsInCart] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
 
   const classes = cartStyle();
 
-  const getTotalPrice = (ItemList) => {
+  const getTotalPrice = (itemList) => {
     let totalPrice = 0;
-    ItemList.forEach((item) => {
+    itemList.forEach((item) => {
       const itemPrice = item.quantity * parseInt(item.book.price);
       totalPrice = totalPrice + itemPrice;
     });
@@ -42,56 +42,48 @@ const Cart = () => {
         cartContext.updateCart();
       }
     } catch (error) {
-      toast.error("Somthing went wrong!");
+      toast.error("Something went wrong!");
     }
   };
-  const updateQuantity = async (cartItem, inc, e) => {
-    const current_count = parseInt(
-      e.target.closest(".qty-group").children[1].innerText
-    );
-    const quantity = inc ? current_count + 1 : current_count - 1;
+
+  const updateQuantity = async (cartItem, inc) => {
+    const currentCount = cartItem.quantity;
+    const quantity = inc ? currentCount + 1 : currentCount - 1;
     if (quantity === 0) {
       toast.error("Item quantity should not be zero");
       return;
     }
-    cartService
-      .updateItem({
+
+    try {
+      const res = await cartService.updateItem({
         id: cartItem.id,
         userId: cartItem.userId,
         bookId: cartItem.book.id,
         quantity,
-      })
-      .then((res) => {
-        if (res) {
-          const item = CartList.find(
-            (item) => item.book.id === cartItem.book.id
-          );
-          if (item) {
-            const current_div_count = parseInt(
-              e.target.closest(".qty-group").children[1].innerText
-            );
-            const newCount = inc
-              ? current_div_count + 1
-              : current_div_count - 1;
-            e.target.closest(".qty-group").children[1].innerText = newCount;
-            const newPrice = inc
-              ? TotalPrice + parseInt(item.book.price)
-              : TotalPrice - parseInt(item.book.price);
-            setTotalPrice(newPrice);
-          }
-        }
       });
+      if (res) {
+        const updatedCartList = cartList.map((item) =>
+          item.id === cartItem.id ? { ...item, quantity } : item
+        );
+        cartContext.updateCart(updatedCartList);
+        const updatedPrice =
+          totalPrice +
+          (inc
+            ? parseInt(cartItem.book.price)
+            : -parseInt(cartItem.book.price));
+        setTotalPrice(updatedPrice);
+      }
+    } catch (error) {
+      toast.error("Something went wrong!");
+    }
   };
 
-  const PlaceOrder = async () => {
+  const placeOrder = async () => {
     if (authContext.user.id) {
       const userCart = await cartService.getList(authContext.user.id);
       if (userCart.length) {
         try {
-          let cartIds = [];
-          userCart.forEach((element) => {
-            cartIds.push(element.id);
-          });
+          let cartIds = userCart.map((element) => element.id);
           const newOrder = {
             userId: authContext.user.id,
             cartIds,
@@ -117,12 +109,12 @@ const Cart = () => {
         <Typography variant="h1">Cart page</Typography>
         <div className="cart-heading-block">
           <Typography variant="h2">
-            My Shopping Bag ({ItemsInCart} Items)
+            My Shopping Bag ({itemsInCart} Items)
           </Typography>
-          <div className="total-price">Total price: {TotalPrice}</div>
+          <div className="total-price">Total price: {totalPrice}</div>
         </div>
         <div className="cart-list-wrapper">
-          {CartList.map((cartItem) => {
+          {cartList.map((cartItem) => {
             return (
               <div className="cart-list-item" key={cartItem.id}>
                 <div className="cart-item-img">
@@ -146,14 +138,14 @@ const Cart = () => {
                     <div className="qty-group">
                       <Button
                         className="btn pink-btn"
-                        onClick={(e) => updateQuantity(cartItem, true, e)}
+                        onClick={() => updateQuantity(cartItem, true)}
                       >
                         +
                       </Button>
                       <span className="number-count">{cartItem.quantity}</span>
                       <Button
                         className="btn pink-btn"
-                        onClick={(e) => updateQuantity(cartItem, false, e)}
+                        onClick={() => updateQuantity(cartItem, false)}
                       >
                         -
                       </Button>
@@ -166,7 +158,7 @@ const Cart = () => {
           })}
         </div>
         <div className="btn-wrapper">
-          <Button className="btn pink-btn" onClick={PlaceOrder}>
+          <Button className="btn pink-btn" onClick={placeOrder}>
             Place order
           </Button>
         </div>

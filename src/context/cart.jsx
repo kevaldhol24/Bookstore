@@ -15,13 +15,16 @@ export const CartWrapper = ({ children }) => {
   const authContext = useAuthContext();
 
   const [cartData, setCartData] = useState([]);
+
   useEffect(() => {
     updateCart();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authContext.user.id]);
 
-  const updateCart = () => {
-    if (authContext.user.id) {
+  const updateCart = (updatedCartList) => {
+    if (updatedCartList) {
+      setCartData(updatedCartList);
+    } else if (authContext.user.id) {
       cartService.getList(authContext.user.id).then((res) => setCartData(res));
     }
   };
